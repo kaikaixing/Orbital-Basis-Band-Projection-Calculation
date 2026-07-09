@@ -43,7 +43,7 @@ def solver_args(mu_selection: str, args: argparse.Namespace) -> Namespace:
         mu_selection=mu_selection,
         overlap_weight_mode="pair_factor",
         fs_cutoff=0.2,
-        classify_object="projected_delta",
+        classify_object="projected_component",
         component_set="paper_gamma",
     )
 
@@ -101,7 +101,7 @@ def main() -> None:
             "T": args.T,
             "J": args.J,
             "susceptibility_type": "projected_formula",
-            "classify_object": "projected_delta",
+            "classify_object": "projected_component",
         },
         "positive_product": [compact_row(row) for row in run_suite("positive_product", args)],
         "all": [compact_row(row) for row in run_suite("all", args)],
@@ -117,4 +117,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

@@ -133,12 +133,17 @@ The paper's eight Gamma channels map to the single-band notation as follows.
 
 Because `g_y=0` in this projected Lieb model, Gamma6 and Gamma8 vanish.
 
-The quantity to compare with the multiband gap shape is not just
-`Omega_nu(k)`, but the back-projected component
+The quantity used here for a Gamma-label diagnostic is not just
+`Omega_nu(k)`, but the rank-one projected component shape
 
 ```text
-Delta_{mu,nu}(k) = g_mu(k) Omega_nu(k).
+C^{proj}_{mu,nu}(k) = g_mu(k) Omega_nu(k).
 ```
+
+This is a diagnostic shape obtained after single-band projection.  It should
+not be identified with a full orbital Hubbard-Stratonovich eigenvector
+`Delta_{mu,nu}(k)`.  For a full HS field, the band-projected gap is instead
+`Omega_nu^{band}(k)=sum_mu g_mu^*(k) Delta_{mu,nu}(k)`.
 
 ## Attractive-only comparison
 
@@ -184,7 +189,7 @@ J = 2/3
 r = (r/J) * J
 band_sign = +1
 mu_selection = "positive_product"
-classify_object = "projected_delta"
+classify_object = "projected_component"
 overlap_weight_mode = "pair_factor"
 ```
 
@@ -227,7 +232,8 @@ sum can choose a `Gamma7`-like `p'` channel instead of the paper's `Gamma5`
 the object being diagonalized is different.
 
 The explicit `mu_selection="all"` check, using the same corrected
-reciprocal-gauge-symmetrized kernel and the same `projected_delta` classifier,
+reciprocal-gauge-symmetrized kernel and the same `projected_component`
+diagnostic classifier,
 is:
 
 ```text
@@ -236,7 +242,7 @@ T = 0.05
 J = 2/3
 kernel_sign = +1
 mu_selection = "all"
-classify_object = "projected_delta"
+classify_object = "projected_component"
 overlap_weight_mode = "pair_factor"
 ```
 
@@ -264,7 +270,7 @@ The clean benchmark prescription is therefore:
 fixed chi ordering: chi(-J) + s_mu chi(+J)
 fixed kernel_sign: +1
 paper comparison: mu_selection="positive_product"
-physical gap shape: inspect Delta_{mu,nu}=g_mu Omega_nu, not only Omega_nu
+diagnostic Gamma label: inspect C^{proj}_{mu,nu}=g_mu Omega_nu, not only Omega_nu
 ```
 
 ## Check: dropping reciprocal-gauge symmetrization
@@ -289,7 +295,7 @@ Nk = 31
 T = 0.05
 J = 2/3
 mu_selection = "positive_product"
-classify_object = "projected_delta"
+classify_object = "projected_component"
 ```
 
 the one-sided result is:

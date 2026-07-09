@@ -94,9 +94,8 @@ Main file:
 - `benchmarks/gamma_component_report.py`
 
 This script solves the single-band projected equation and then reports
-`g_mu(k) Omega_nu(k)` as a diagnostic Gamma-component shape.  It is not a
-full Gamma-basis HS solver and should not be used as evidence that the full
-orbital HS field satisfies `Delta_{mu,nu}=g_mu Omega_nu`.
+`C_proj` as a diagnostic Gamma-component shape.  It is not a full Gamma-basis
+HS solver and does not reconstruct the full orbital HS field.
 
 Run:
 
@@ -110,7 +109,7 @@ python benchmarks/gamma_component_report.py --Nk 21 --mu-selection all
 The full Gamma-basis solver and the scalar band-projection solver do not solve the identical eigenproblem.  They should be compared at the level of:
 
 - leading symmetry sector;
-- dominant Gamma component or projected `g_mu Omega_nu` diagnostic component;
+- dominant Gamma component or projected `C_proj` diagnostic component;
 - dominant momentum harmonic;
 - robustness under `positive_product` versus `all` channels.
 

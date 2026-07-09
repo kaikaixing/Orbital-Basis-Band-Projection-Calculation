@@ -109,18 +109,20 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--classify-object",
-        default="projected_delta",
-        choices=("omega", "projected_delta"),
+        default="projected_component",
+        choices=("omega", "projected_component"),
         help=(
-            "Classify the solved Omega_nu(k), or classify the back-projected "
-            "Delta_{mu,nu}(k)=g_mu(k) Omega_nu(k) component."
+            "Classify the solved Omega_nu(k), or classify the rank-one "
+            "projected diagnostic component "
+            "C_proj_{mu,nu}(k)=g_mu(k) Omega_nu(k). This diagnostic is not "
+            "the full orbital HS field Delta_{mu,nu}(k)."
         ),
     )
     parser.add_argument(
         "--component-set",
         default="paper_gamma",
         choices=("paper_gamma", "all"),
-        help="Projected-delta components considered when --classify-object=projected_delta.",
+        help="Diagnostic projected components considered when --classify-object=projected_component.",
     )
     parser.add_argument("--fs-cutoff", type=float, default=0.2)
     parser.add_argument(
@@ -204,7 +206,7 @@ def component_harmonic_overlaps(
     return rows[:top]
 
 
-def projected_delta_component_summary(
+def projected_component_summary(
     omega: np.ndarray,
     channel: str,
     g_mu: np.ndarray,
@@ -285,7 +287,7 @@ def solve_scan_point(mu: float, r_over_J: float, args: argparse.Namespace) -> di
                 "phase": classify_basis(str(overlap["name"])),
             }
         else:
-            component_summary = projected_delta_component_summary(
+            component_summary = projected_component_summary(
                 eigenvector,
                 channel,
                 g_mu,
