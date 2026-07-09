@@ -116,34 +116,30 @@ eta_nu = {0:-1, x:-1, y:+1, z:-1}
 Here `eta_nu` is the momentum parity required by fermionic antisymmetry of
 `d_{-k}^T sigma_nu d_k`: `nu=y` is even, while `nu=0,x,z` are odd.
 
-## Gamma-channel mapping
+## Gamma-label mapping
 
-The paper's eight Gamma channels map to the single-band notation as follows.
+The paper's eight Gamma labels are used only as a diagnostic language for
+classifying single-band modes.  The scalar projected solver still solves for
+`Omega_nu(k)` in a fixed spin channel; it does not reconstruct the full
+orbital HS field `Delta_{mu,nu}(k)`.
 
-| Gamma | orbital mu | spin nu | single-band component |
+| Gamma | orbital mu | spin nu | use in projected diagnostic |
 |---|---|---|---|
-| Gamma1 | 0 | 0 | `g_0(k) Omega_0(k)` |
-| Gamma2 | z | z | `g_z(k) Omega_z(k)` |
-| Gamma3 | z | 0 | `g_z(k) Omega_0(k)` |
-| Gamma4 | 0 | z | `g_0(k) Omega_z(k)` |
-| Gamma5 | x | y | `g_x(k) Omega_y(k)` |
-| Gamma6 | y | x | `g_y(k) Omega_x(k)` |
-| Gamma7 | x | x | `g_x(k) Omega_x(k)` |
-| Gamma8 | y | y | `g_y(k) Omega_y(k)` |
+| Gamma1 | 0 | 0 | label for the fixed-`nu=0` mode with orbital label `mu=0` |
+| Gamma2 | z | z | label for the fixed-`nu=z` mode with orbital label `mu=z` |
+| Gamma3 | z | 0 | label for the fixed-`nu=0` mode with orbital label `mu=z` |
+| Gamma4 | 0 | z | label for the fixed-`nu=z` mode with orbital label `mu=0` |
+| Gamma5 | x | y | label for the fixed-`nu=y` mode with orbital label `mu=x` |
+| Gamma6 | y | x | label for the fixed-`nu=x` mode with orbital label `mu=y` |
+| Gamma7 | x | x | label for the fixed-`nu=x` mode with orbital label `mu=x` |
+| Gamma8 | y | y | label for the fixed-`nu=y` mode with orbital label `mu=y` |
 
 Because `g_y=0` in this projected Lieb model, Gamma6 and Gamma8 vanish.
 
-The quantity used here for a Gamma-label diagnostic is not just
-`Omega_nu(k)`, but the rank-one projected component shape
-
-```text
-C^{proj}_{mu,nu}(k) = g_mu(k) Omega_nu(k).
-```
-
-This is a diagnostic shape obtained after single-band projection.  It should
-not be identified with a full orbital Hubbard-Stratonovich eigenvector
-`Delta_{mu,nu}(k)`.  For a full HS field, the band-projected gap is instead
-`Omega_nu^{band}(k)=sum_mu g_mu^*(k) Delta_{mu,nu}(k)`.
+These labels are useful for comparing the projected scalar output with the
+paper notation, but they should not be identified with full orbital
+Hubbard-Stratonovich eigenvectors.  Full Gamma-basis HS fields must be computed
+with the full Gamma-space kernel.
 
 ## Attractive-only comparison
 

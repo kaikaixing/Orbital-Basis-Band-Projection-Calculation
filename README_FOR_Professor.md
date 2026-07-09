@@ -61,20 +61,10 @@ The unknown is only `Omega_nu(k)` for a fixed spin channel `nu`.  Orbital struct
 g_mu(k) = u_n^T(-k) tau_mu u_n(k).
 ```
 
-For a lightweight Gamma-label diagnostic, inspect the rank-one projected
-pair-amplitude lift
-
-```text
-C_{mu,nu}^{proj}(k) = g_mu(k) Omega_nu(k).
-```
-
-This diagnostic should not be identified with the full orbital HS eigenvector
-`Delta_{mu,nu}(k)`.  For a full Gamma-basis HS field, the band-projected gap is
-instead
-
-```text
-Omega_nu^{band}(k) = sum_mu g_mu^*(k) Delta_{mu,nu}(k).
-```
+The optional Gamma report below only attaches paper-style Gamma labels to the
+computed single-band modes for comparison.  Those labels are bookkeeping
+diagnostics; they should not be read as a reconstruction of the full orbital
+Hubbard-Stratonovich field `Delta_{mu,nu}(k)`.
 
 Run:
 
@@ -94,8 +84,9 @@ Main file:
 - `benchmarks/gamma_component_report.py`
 
 This script solves the single-band projected equation and then reports
-`C_proj` as a diagnostic Gamma-component shape.  It is not a full Gamma-basis
-HS solver and does not reconstruct the full orbital HS field.
+which Gamma labels and simple harmonics best describe the projected modes.  It
+is not a full Gamma-basis HS solver and does not reconstruct the full orbital
+HS field.
 
 Run:
 
@@ -109,7 +100,7 @@ python benchmarks/gamma_component_report.py --Nk 21 --mu-selection all
 The full Gamma-basis solver and the scalar band-projection solver do not solve the identical eigenproblem.  They should be compared at the level of:
 
 - leading symmetry sector;
-- dominant Gamma component or projected `C_proj` diagnostic component;
+- dominant Gamma label assigned to the projected scalar mode;
 - dominant momentum harmonic;
 - robustness under `positive_product` versus `all` channels.
 

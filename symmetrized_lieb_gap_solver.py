@@ -5,9 +5,9 @@ from __future__ import annotations
 This is the band-projection route.  The unknown solved here is the scalar
 single-band gap function Omega_nu(k) in one fixed spin channel nu.  Orbital
 information enters only through projected form factors
-g_mu(k)=u_n^T(-k) tau_mu u_n(k).  Gamma-like labels may be diagnosed from
-the rank-one projected shapes g_mu(k) Omega_nu(k), but those shapes are not
-the full orbital HS eigenvector Delta_{mu,nu}(k).
+g_mu(k)=u_n^T(-k) tau_mu u_n(k).  Gamma-like labels can be assigned later as
+a bookkeeping diagnostic, but this file does not compute the full orbital HS
+eigenvector Delta_{mu,nu}(k).
 
 Use this file when checking the reduced projected equation
 

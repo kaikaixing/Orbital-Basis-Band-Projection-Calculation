@@ -112,10 +112,10 @@ def parse_args() -> argparse.Namespace:
         default="projected_component",
         choices=("omega", "projected_component"),
         help=(
-            "Classify the solved Omega_nu(k), or classify the rank-one "
-            "projected diagnostic component "
-            "C_proj_{mu,nu}(k)=g_mu(k) Omega_nu(k). This diagnostic is not "
-            "the full orbital HS field Delta_{mu,nu}(k)."
+            "Classify the solved Omega_nu(k), or classify an auxiliary "
+            "Gamma-label diagnostic built from the projected orbital "
+            "form-factor information. This diagnostic is not the full "
+            "orbital HS field Delta_{mu,nu}(k)."
         ),
     )
     parser.add_argument(

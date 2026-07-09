@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-"""Report diagnostic Gamma-like shapes of scalar band-projected modes.
+"""Report diagnostic Gamma labels for scalar band-projected modes.
 
 This diagnostic sits between the two main routes.  It first solves the scalar
-band-projected equation for Omega_nu(k), then reports the rank-one projected
-shapes g_mu(k) Omega_nu(k) in the Gamma_a=tau_mu sigma_nu language.
+band-projected equation for Omega_nu(k), then ranks paper-style
+Gamma_a=tau_mu sigma_nu labels using the projected orbital form-factor
+information.
 
-Important: these diagnostic shapes are not the full orbital HS field
-Delta_{mu,nu}(k).  The verified relation for a full HS field is the opposite
-projection, Omega_nu^band(k)=sum_mu g_mu^*(k) Delta_{mu,nu}(k); reconstructing
-the full HS vector requires the full Gamma-space kernel.
+Important: these labels are only a bookkeeping bridge between the projected
+scalar calculation and the paper's Gamma notation.  This script is not a full
+Gamma-basis HS solver and does not reconstruct Delta_{mu,nu}(k).
 """
 
 import argparse
