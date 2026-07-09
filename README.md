@@ -6,7 +6,7 @@ calculations in the Lieb-lattice model:
 1. a full spin-orbital Gamma-basis calculation;
 2. a single-band projected scalar calculation.
 
-Start with `README_FOR_TEACHER.md` for the code map, physical meaning of each
+Start with `README_FOR_Professor.md` for the code map, physical meaning of each
 script, and recommended run commands.
 
 Install dependencies:
