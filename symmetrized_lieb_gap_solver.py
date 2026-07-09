@@ -69,10 +69,10 @@ class GapEquationParams:
     # Susceptibility parameters.  Available built-ins:
     #   "lattice":    chi0 / [r - J cos(qx/2) cos(qy/2)]
     #   "continuum": chi0 / [r + qx^2 + qy^2]
-    #   "paper56":   framework chi56 matrix replacing the whole
+    #   "paper56":   legacy paper-sector matrix replacing the whole
     #                [chi(p-k)+eta_nu chi(p+k)] bracket
-    #   "paper78":   framework chi78 matrix
-    #   "paper1234": framework chi1234 matrix
+    #   "paper78":   legacy paper-sector matrix
+    #   "paper1234": legacy paper-sector matrix
     #   "projected_formula": use the final reciprocal-lattice symmetrized,
     #                mu-resolved equation from the note
     #       g^2/32 * sum_mu s_mu s_nu g_mu^*(p)g_mu(k)
@@ -93,8 +93,8 @@ class GapEquationParams:
     # Numerical controls.
     xi_tol: float = 1e-10
     # Overall sign convention for the linearized gap kernel.  With the
-    # PDF/Route-I chi(-J)+s_mu chi(+J) ordering below, +1 reproduces the
-    # paper-sector kernels: Gamma1-4 -> chi1234 and Gamma5/7 -> chi56/chi78.
+    # PDF/Route-I chi(-J)+s_mu chi(+J) ordering below, +1 matches the
+    # paper-sector sign convention used by the benchmark points.
     kernel_sign: float = 1.0
     dense_eig_max_dim: int = 900
     sparse_num_eigs: int = 1

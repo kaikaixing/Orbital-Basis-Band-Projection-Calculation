@@ -45,18 +45,11 @@ C_{mu,nu}(p,k)
  + eta_nu s_mu chi_{p,-k}(+J).
 ```
 
-This `chi(-J) + s_mu chi(+J)` ordering reproduces the Route-I sector kernels:
-
-```text
-Gamma1-4 sector -> chi1234
-Gamma5/6 sector -> chi56
-Gamma7/8 sector -> chi78
-```
-
-Using the old ordering `chi(+J) + s_mu chi(-J)` flips the Gamma5/Gamma7 sector
-relative to Gamma1-4, and then an artificial global `kernel_sign=-1` can make
-some benchmark points look correct while failing near the Gamma1-4 p-wave
-region.
+This `chi(-J) + s_mu chi(+J)` ordering matches the Route-I paper-sector sign
+convention used by the benchmark points.  Using the old ordering
+`chi(+J) + s_mu chi(-J)` flips relative sector signs, and then an artificial
+global `kernel_sign=-1` can make some benchmark points look correct while
+failing near the p-wave region.
 
 ## Fixed conventions
 
@@ -300,5 +293,5 @@ g_y(k+G_l) = 0
 
 At the same time the half-angle susceptibility changes branch under the same
 reciprocal shift, effectively exchanging `J` and `-J`.  The reciprocal-gauge
-average is what combines these two sign changes into the sector kernels
-`chi1234`, `chi56`, and `chi78`.
+average is what combines these two sign changes into the paper-sector kernel
+structure used by the projected benchmark.
