@@ -20,7 +20,7 @@ Main entry points:
 ```bash
 python benchmarks/run_full_16_gamma_benchmarks.py --Nk-base 8 --Nw 8
 python benchmarks/run_projected_gap_benchmarks.py --Nk 31
-python benchmarks/gamma_component_report.py --Nk 21 --mu-selection positive_product
+python benchmarks/band_pairing_report.py --Nk 21 --mu-selection positive_product
 ```
 
 Generated numerical outputs are ignored by git.

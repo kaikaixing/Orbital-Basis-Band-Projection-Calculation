@@ -61,10 +61,9 @@ The unknown is only `Omega_nu(k)` for a fixed spin channel `nu`.  Orbital struct
 g_mu(k) = u_n^T(-k) tau_mu u_n(k).
 ```
 
-The optional Gamma report below only attaches paper-style Gamma labels to the
-computed single-band modes for comparison.  Those labels are bookkeeping
-diagnostics; they should not be read as a reconstruction of the full orbital
-Hubbard-Stratonovich field `Delta_{mu,nu}(k)`.
+The projected workflow reports the band pairing eigenfunction `Omega_nu(k)`.
+The form factors `g_mu(k)` are part of the kernel construction, but the report
+does not multiply `Omega_nu(k)` by `g_mu(k)` to assign Gamma-component labels.
 
 Run:
 
@@ -77,22 +76,21 @@ This prints both:
 - `mu_selection="positive_product"`: paper-like attractive-sector comparison;
 - `mu_selection="all"`: full fixed-spin-channel projected kernel.
 
-## 3. Gamma-Component Report for Projected Modes
+## 3. Band-Pairing Report for Projected Modes
 
 Main file:
 
-- `benchmarks/gamma_component_report.py`
+- `benchmarks/band_pairing_report.py`
 
-This script solves the single-band projected equation and then reports
-which Gamma labels and simple harmonics best describe the projected modes.  It
-is not a full Gamma-basis HS solver and does not reconstruct the full orbital
-HS field.
+This script solves the single-band projected equation and reports the leading
+band pairing modes `Omega_nu(k)`: spin channel, eigenvalue, best simple
+harmonic, and overlap.  It intentionally does not report Gamma components.
 
 Run:
 
 ```bash
-python benchmarks/gamma_component_report.py --Nk 21 --mu-selection positive_product
-python benchmarks/gamma_component_report.py --Nk 21 --mu-selection all
+python benchmarks/band_pairing_report.py --Nk 21 --mu-selection positive_product
+python benchmarks/band_pairing_report.py --Nk 21 --mu-selection all
 ```
 
 ## Current Interpretation Boundary
@@ -100,8 +98,7 @@ python benchmarks/gamma_component_report.py --Nk 21 --mu-selection all
 The full Gamma-basis solver and the scalar band-projection solver do not solve the identical eigenproblem.  They should be compared at the level of:
 
 - leading symmetry sector;
-- dominant Gamma label assigned to the projected scalar mode;
-- dominant momentum harmonic;
+- leading spin channel and band-pairing harmonic of `Omega_nu(k)`;
 - robustness under `positive_product` versus `all` channels.
 
 The scalar labels `s'`, `d'`, `p`, and `p'` are harmonic classifications of the computed eigenfunction.  They should not be read as symmetry input imposed before solving.

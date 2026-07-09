@@ -39,20 +39,6 @@ PHASE_LABELS = {
     "other": "other",
 }
 
-MU_LABELS = ("0", "x", "y", "z")
-
-PAPER_GAMMA_LABELS = {
-    ("0", "0"): "Gamma1 tau0 sigma0",
-    ("z", "z"): "Gamma2 tauz sigmaz",
-    ("z", "0"): "Gamma3 tauz sigma0",
-    ("0", "z"): "Gamma4 tau0 sigmaz",
-    ("x", "y"): "Gamma5 taux sigmay",
-    ("y", "x"): "Gamma6 tauy sigmax",
-    ("x", "x"): "Gamma7 taux sigmax",
-    ("y", "y"): "Gamma8 tauy sigmay",
-}
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
@@ -107,23 +93,6 @@ def parse_args() -> argparse.Namespace:
         default="pair_factor",
         choices=("uniform", "pair_factor", "fs_shell"),
     )
-    parser.add_argument(
-        "--classify-object",
-        default="projected_component",
-        choices=("omega", "projected_component"),
-        help=(
-            "Classify the solved Omega_nu(k), or classify an auxiliary "
-            "Gamma-label diagnostic built from the projected orbital "
-            "form-factor information. This diagnostic is not the full "
-            "orbital HS field Delta_{mu,nu}(k)."
-        ),
-    )
-    parser.add_argument(
-        "--component-set",
-        default="paper_gamma",
-        choices=("paper_gamma", "all"),
-        help="Diagnostic projected components considered when --classify-object=projected_component.",
-    )
     parser.add_argument("--fs-cutoff", type=float, default=0.2)
     parser.add_argument(
         "--out-dir",
@@ -155,98 +124,6 @@ def classify_basis(name: str) -> str:
     return "other"
 
 
-def align_phase(vec: np.ndarray) -> np.ndarray:
-    idx = int(np.argmax(np.abs(vec)))
-    if abs(vec[idx]) < 1e-14:
-        return vec
-    return vec * np.exp(-1.0j * np.angle(vec[idx]))
-
-
-def component_harmonic_overlaps(
-    component: np.ndarray,
-    band,
-    params: GapEquationParams,
-    top: int = 1,
-) -> list[dict[str, object]]:
-    data = np.real(align_phase(component)).reshape(params.Nk, params.Nk)
-    weight = np.maximum(band.W.reshape(params.Nk, params.Nk), 0.0)
-    if params.overlap_weight_mode == "uniform":
-        weight = np.ones_like(weight)
-    elif params.overlap_weight_mode == "fs_shell":
-        abs_xi = np.abs(band.xi.reshape(params.Nk, params.Nk))
-        shell = abs_xi <= params.fs_cutoff
-        if not np.any(shell):
-            shell = abs_xi == np.nanmin(abs_xi)
-        weight = shell.astype(float)
-
-    rows = []
-    for name, basis in [
-        item for item in [
-            ("s prime ~ cos(kx/2) cos(ky/2)", np.cos(0.5 * band.kx_grid) * np.cos(0.5 * band.ky_grid)),
-            ("d prime ~ sin(kx/2) sin(ky/2)", np.sin(0.5 * band.kx_grid) * np.sin(0.5 * band.ky_grid)),
-            ("p wave f1 ~ sin kx (1 - cos ky)", np.sin(band.kx_grid) * (1.0 - np.cos(band.ky_grid))),
-            ("p wave f2 ~ sin ky (1 - cos kx)", np.sin(band.ky_grid) * (1.0 - np.cos(band.kx_grid))),
-            ("u_plus ~ sin((kx+ky)/2)", np.sin(0.5 * (band.kx_grid + band.ky_grid))),
-            ("u_minus ~ sin((kx-ky)/2)", np.sin(0.5 * (band.kx_grid - band.ky_grid))),
-        ]
-    ]:
-        numerator = float(np.sum(weight * data * basis))
-        data_norm = float(np.sum(weight * data * data))
-        basis_norm = float(np.sum(weight * basis * basis))
-        denom = float(np.sqrt(data_norm * basis_norm))
-        overlap = numerator / denom if denom > 1e-14 else 0.0
-        rows.append(
-            {
-                "name": name,
-                "overlap": overlap,
-                "abs_overlap": abs(overlap),
-            }
-        )
-    rows.sort(key=lambda row: row["abs_overlap"], reverse=True)
-    return rows[:top]
-
-
-def projected_component_summary(
-    omega: np.ndarray,
-    channel: str,
-    g_mu: np.ndarray,
-    band,
-    params: GapEquationParams,
-    component_set: str,
-) -> dict[str, object]:
-    rows = []
-    for mu_index, mu_label in enumerate(MU_LABELS):
-        gamma_label = PAPER_GAMMA_LABELS.get(
-            (mu_label, channel), f"tau{mu_label} sigma{channel}"
-        )
-        if component_set == "paper_gamma" and (mu_label, channel) not in PAPER_GAMMA_LABELS:
-            continue
-        component = g_mu[mu_index] * omega
-        norm = float(np.linalg.norm(component))
-        overlap = component_harmonic_overlaps(component, band, params, top=1)[0]
-        rows.append(
-            {
-                "mu": mu_label,
-                "gamma": gamma_label,
-                "component_norm": norm,
-                "basis": str(overlap["name"]),
-                "basis_overlap": float(overlap["overlap"]),
-                "phase": classify_basis(str(overlap["name"])),
-            }
-        )
-    if not rows:
-        return {
-            "mu": "",
-            "gamma": "",
-            "component_norm": 0.0,
-            "basis": "unclassified",
-            "basis_overlap": 0.0,
-            "phase": "other",
-        }
-    rows.sort(key=lambda row: row["component_norm"], reverse=True)
-    return rows[0]
-
-
 def solve_scan_point(mu: float, r_over_J: float, args: argparse.Namespace) -> dict[str, object]:
     params = GapEquationParams(
         Nk=args.Nk,
@@ -276,37 +153,18 @@ def solve_scan_point(mu: float, r_over_J: float, args: argparse.Namespace) -> di
         eigenvalue, eigenvector = solve_channel_eigenproblem(
             kernel, params, ETA_NU[channel]
         )
-        if args.classify_object == "omega":
-            overlap = harmonic_overlaps(eigenvector, band, params, top=1)[0]
-            component_summary = {
-                "mu": "",
-                "gamma": f"Omega_{channel}",
-                "component_norm": float(np.linalg.norm(eigenvector)),
-                "basis": str(overlap["name"]),
-                "basis_overlap": float(overlap["overlap"]),
-                "phase": classify_basis(str(overlap["name"])),
-            }
-        else:
-            component_summary = projected_component_summary(
-                eigenvector,
-                channel,
-                g_mu,
-                band,
-                params,
-                args.component_set,
-            )
+        overlap = harmonic_overlaps(eigenvector, band, params, top=1)[0]
         channel_rows.append(
             {
                 "channel": channel,
                 "eta": ETA_NU[channel],
                 "lambda": float(np.real(eigenvalue)),
                 "lambda_imag": float(np.imag(eigenvalue)),
-                "component_mu": component_summary["mu"],
-                "component_gamma": component_summary["gamma"],
-                "component_norm": component_summary["component_norm"],
-                "basis": component_summary["basis"],
-                "basis_overlap": component_summary["basis_overlap"],
-                "phase": component_summary["phase"],
+                "pairing_object": f"Omega_{channel}",
+                "omega_norm": float(np.linalg.norm(eigenvector)),
+                "basis": str(overlap["name"]),
+                "basis_overlap": float(overlap["overlap"]),
+                "phase": classify_basis(str(overlap["name"])),
             }
         )
 
@@ -321,9 +179,8 @@ def solve_scan_point(mu: float, r_over_J: float, args: argparse.Namespace) -> di
         "winner_phase": winner["phase"],
         "winner_channel": winner["channel"],
         "winner_eta": winner["eta"],
-        "winner_component_mu": winner["component_mu"],
-        "winner_component_gamma": winner["component_gamma"],
-        "winner_component_norm": winner["component_norm"],
+        "winner_pairing_object": winner["pairing_object"],
+        "winner_omega_norm": winner["omega_norm"],
         "winner_basis": winner["basis"],
         "winner_basis_overlap": winner["basis_overlap"],
         "lambda_winner": winner["lambda"],
@@ -337,10 +194,10 @@ def solve_scan_point(mu: float, r_over_J: float, args: argparse.Namespace) -> di
         "basis_x": next(row["basis"] for row in channel_rows if row["channel"] == "x"),
         "basis_y": next(row["basis"] for row in channel_rows if row["channel"] == "y"),
         "basis_z": next(row["basis"] for row in channel_rows if row["channel"] == "z"),
-        "gamma_0": next(row["component_gamma"] for row in channel_rows if row["channel"] == "0"),
-        "gamma_x": next(row["component_gamma"] for row in channel_rows if row["channel"] == "x"),
-        "gamma_y": next(row["component_gamma"] for row in channel_rows if row["channel"] == "y"),
-        "gamma_z": next(row["component_gamma"] for row in channel_rows if row["channel"] == "z"),
+        "omega_0": next(row["pairing_object"] for row in channel_rows if row["channel"] == "0"),
+        "omega_x": next(row["pairing_object"] for row in channel_rows if row["channel"] == "x"),
+        "omega_y": next(row["pairing_object"] for row in channel_rows if row["channel"] == "y"),
+        "omega_z": next(row["pairing_object"] for row in channel_rows if row["channel"] == "z"),
     }
     return out
 
@@ -354,9 +211,8 @@ def write_csv(rows: list[dict[str, object]], path: Path) -> None:
         "winner_phase",
         "winner_channel",
         "winner_eta",
-        "winner_component_mu",
-        "winner_component_gamma",
-        "winner_component_norm",
+        "winner_pairing_object",
+        "winner_omega_norm",
         "winner_basis",
         "winner_basis_overlap",
         "lambda_winner",
@@ -370,10 +226,10 @@ def write_csv(rows: list[dict[str, object]], path: Path) -> None:
         "basis_x",
         "basis_y",
         "basis_z",
-        "gamma_0",
-        "gamma_x",
-        "gamma_y",
-        "gamma_z",
+        "omega_0",
+        "omega_x",
+        "omega_y",
+        "omega_z",
     ]
     with path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)

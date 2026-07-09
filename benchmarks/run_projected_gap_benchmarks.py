@@ -43,8 +43,6 @@ def solver_args(mu_selection: str, args: argparse.Namespace) -> Namespace:
         mu_selection=mu_selection,
         overlap_weight_mode="pair_factor",
         fs_cutoff=0.2,
-        classify_object="projected_component",
-        component_set="paper_gamma",
     )
 
 
@@ -63,7 +61,7 @@ def compact_row(row: dict[str, object]) -> dict[str, object]:
         "r_over_J": row["r_over_J"],
         "winner_phase": row["winner_phase"],
         "winner_channel": row["winner_channel"],
-        "winner_component_gamma": row["winner_component_gamma"],
+        "winner_pairing_object": row["winner_pairing_object"],
         "winner_basis": row["winner_basis"],
         "winner_basis_overlap": row["winner_basis_overlap"],
         "lambda_winner": row["lambda_winner"],
@@ -76,11 +74,11 @@ def print_table(label: str, rows: list[dict[str, object]]) -> None:
     print(f"\n[{label}]")
     for row in rows:
         print(
-            "mu={mu:g}, r/J={ratio:g}: {gamma}, {basis}, "
+            "mu={mu:g}, r/J={ratio:g}: {pairing_object}, {basis}, "
             "nu={nu}, lambda={lam:.6e}, overlap={overlap:+.3f}".format(
                 mu=float(row["mu"]),
                 ratio=float(row["r_over_J"]),
-                gamma=row["winner_component_gamma"],
+                pairing_object=row["winner_pairing_object"],
                 basis=row["winner_basis"],
                 nu=row["winner_channel"],
                 lam=float(row["lambda_winner"]),
@@ -101,7 +99,7 @@ def main() -> None:
             "T": args.T,
             "J": args.J,
             "susceptibility_type": "projected_formula",
-            "classify_object": "projected_component",
+            "reported_object": "Omega_nu(k)",
         },
         "positive_product": [compact_row(row) for row in run_suite("positive_product", args)],
         "all": [compact_row(row) for row in run_suite("all", args)],
